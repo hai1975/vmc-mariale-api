@@ -7,6 +7,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from app.config import settings
 from app.database import init_db
 from app.routers import forms, mc, sessions
+from app.routers.mc import MC_API_VERSION
 
 
 class StripMountPathMiddleware:
@@ -59,6 +60,7 @@ app.include_router(mc.router, prefix="/api")
 def health():
     return {
         "status": "ok",
-        "service": "vm-clinic-api",
+        "service": "vmc-mariale-api",
+        "mc_api_version": MC_API_VERSION,
         "gemini_configured": bool(settings.gemini_api_key),
     }

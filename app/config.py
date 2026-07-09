@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def _resolve_project_path(value: Path) -> Path:
@@ -14,19 +14,20 @@ def _resolve_project_path(value: Path) -> Path:
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=PROJECT_ROOT / "backend" / ".env",
+        env_file=PROJECT_ROOT / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
 
     gemini_api_key: str = ""
     gemini_live_model: str = "gemini-3.1-flash-live-preview"
+    gemini_live_model_vi: str = "gemini-2.5-flash-native-audio-preview-12-2025"
+    gemini_live_model_nl: str = "gemini-2.5-flash-native-audio-preview-12-2025"
     form_dir: Path = PROJECT_ROOT / "Form"
     schema_dir: Path = PROJECT_ROOT / "schemas"
     data_dir: Path = PROJECT_ROOT / "data"
     database_url: str = f"sqlite:///{(PROJECT_ROOT / 'data' / 'vmc.db').as_posix()}"
     cors_origins: str = "http://localhost:5173,capacitor://localhost,http://localhost,https://hai1975.com,https://www.hai1975.com"
-    # Set to /vmc-api when cPanel Python app URL is hai1975.com/vmc-api
     api_mount_path: str = ""
 
     @field_validator("form_dir", "schema_dir", "data_dir", mode="before")

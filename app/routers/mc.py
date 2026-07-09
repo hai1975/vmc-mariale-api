@@ -21,7 +21,7 @@ from app.services.mc_prompts import (
 router = APIRouter(prefix="/mc", tags=["mc"])
 
 # Bump when MC/Gemini script-mode behavior changes (verify via GET /api/health).
-MC_API_VERSION = "2026-07-09-gemini-verbatim-v2"
+MC_API_VERSION = "2026-07-09-gemini-verbatim-v3"
 
 _NATIVE_AUDIO_MARKERS = (
     "native-audio",
@@ -116,9 +116,6 @@ async def mc_live_token(req: LiveTokenRequest) -> LiveTokenResponse:
         "input_audio_transcription": {},
         "output_audio_transcription": {},
     }
-    if script_mode:
-        live_config["generation_config"] = {"temperature": 0.1, "top_p": 0.85}
-        live_config["thinking_config"] = {"thinking_level": "MINIMAL"}
 
     client = genai.Client(api_key=settings.gemini_api_key, http_options={"api_version": "v1alpha"})
     now = datetime.now(timezone.utc)
@@ -132,5 +129,7 @@ async def mc_live_token(req: LiveTokenRequest) -> LiveTokenResponse:
         })
     except genai_errors.ClientError as exc:
         raise HTTPException(status_code=502, detail=f"Gemini error: {exc}") from exc
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Live token error: {exc}") from exc
 
     return LiveTokenResponse(token=token.name, model=model, opening_prompt=opening_prompt)

@@ -21,7 +21,7 @@ from app.services.mc_prompts import (
 router = APIRouter(prefix="/mc", tags=["mc"])
 
 # Bump when MC/Gemini script-mode behavior changes (verify via GET /api/health).
-MC_API_VERSION = "2026-07-09-gemini-verbatim-v3"
+MC_API_VERSION = "2026-07-09-gemini-verbatim-v4"
 
 _NATIVE_AUDIO_MARKERS = (
     "native-audio",
@@ -112,7 +112,7 @@ async def mc_live_token(req: LiveTokenRequest) -> LiveTokenResponse:
     live_config: dict = {
         "response_modalities": ["AUDIO"],
         "system_instruction": system_instruction,
-        "speech_config": _build_speech_config(lang, gender, model, force_language=script_mode),
+        "speech_config": _build_speech_config(lang, gender, model),
         "input_audio_transcription": {},
         "output_audio_transcription": {},
     }
